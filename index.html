@@ -1,0 +1,135 @@
+<button onclick="speak()">ACTIVATE JARVIS</button>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JARVIS AI</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ min-height:100vh;
+ background:#020914;
+ color:#00dfff;
+ font-family:Arial;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ text-align:center;
+}
+h1{
+ letter-spacing:8px;
+ text-shadow:0 0 20px #00dfff;
+}
+.circle{
+ width:220px;
+ height:220px;
+ border:3px solid #00dfff;
+ border-radius:50%;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ box-shadow:0 0 30px #00dfff;
+ animation:spin 8s linear infinite;
+}
+.core{
+ width:100px;
+ height:100px;
+ border:3px solid #00dfff;
+ border-radius:50%;
+ box-shadow:0 0 30px #00dfff;
+}
+@keyframes spin{
+ to{transform:rotate(360deg)}
+}
+button{
+ margin:20px;
+ padding:15px 30px;
+ border:2px solid #00dfff;
+ background:transparent;
+ color:#00dfff;
+ border-radius:30px;
+ font-size:17px;
+}
+</style>
+</head>
+<body>
+
+<h1>J.A.R.V.I.S</h1>
+<p>PERSONAL AI ASSISTANT</p>
+
+<div class="circle">
+<div class="core"></div>
+</div>
+
+<h3 id="status">SYSTEM ONLINE</h3>
+
+<button onclick="speak()">ACTIVATE JARVIS</button>
+<button onclick="listen()">🎙️ TALK TO JARVIS</button>
+<p id="userText">I AM LISTENING</p>
+<script>
+function speak(){
+
+ const status=document.getElementById("status");
+
+ if(!("speechSynthesis" in window)){
+  status.innerText="VOICE NOT SUPPORTED";
+  return;
+ }
+
+ window.speechSynthesis.cancel();
+
+ let msg=new SpeechSynthesisUtterance(
+  "Hello Sir. I am Jarvis. How can I help you?"
+ );
+
+ msg.lang="en-US";
+ msg.rate=0.9;
+ msg.pitch=1;
+
+ msg.onstart=function(){
+  status.innerText="JARVIS SPEAKING";
+ };
+
+ msg.onend=function(){
+  status.innerText="SYSTEM ONLINE";
+ };
+
+ msg.onerror=function(){
+  status.innerText="VOICE ERROR";
+ };
+
+ window.speechSynthesis.speak(msg);
+}
+
+function listen() {
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Speech recognition is not supported in this browser");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "hi-IN";
+  recognition.start();
+
+  recognition.onresult = function(event) {
+    const text = event.results[0][0].transcript;
+    document.getElementById("userText").innerText = text;
+
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "hi-IN";
+    speechSynthesis.speak(speech);
+  };
+
+  recognition.onerror = function(event) {
+    alert("Microphone error: " + event.error);
+  };
+}</script>
+</body>
+</html>
